@@ -79,7 +79,7 @@ void HTTPresponse::Build() {
      * <body> */
 
     _response = "";
-    _response += getProtocolString() + SPACE + getStatusCode() + SPACE + getStatus() + CRLF;
+    _response += getProtocolString() + SPACE + std::to_string(getStatusCode()) + SPACE + getStatus() + CRLF;
 
     for (auto header : _headers) {
         _response += header.first + ": " + header.second + CRLF;

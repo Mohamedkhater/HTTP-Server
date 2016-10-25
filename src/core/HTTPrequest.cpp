@@ -136,7 +136,7 @@ void HTTPrequest::Build() {
      * <request-body>*/
     
     _request = "";
-    _request += getMethodString() + SPACE + getUrl() + SPACE + getProtocolString() + CRLF;
+    _request += getMethodString() + SPACE + _url + SPACE + getProtocolString() + CRLF;
     
     for (auto header: _headers) {
         _request += header.first + ": " + header.second + CRLF;
