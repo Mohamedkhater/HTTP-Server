@@ -9,10 +9,7 @@
 #define	HTTP_H
 
 #include <string>
-#include <algorithm> 
-#include <functional> 
-#include <cctype>
-#include <locale>
+#include <algorithm>
 
 #define SPACE ' '
 #define CRLF "\r\n"
