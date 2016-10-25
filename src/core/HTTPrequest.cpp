@@ -68,10 +68,10 @@ bool HTTPrequest::Parse() {
     // get method
     next_index = _request.find_first_of(SPACE);
     if (next_index == std::string::npos) {
-        log_error("Parse Failed: Request method not implemented");
+        log_error("Parse Http Request Failed: Request method not implemented");
         return false;
     }
-    _method->set(_request.substr(current_index, next_index - current_index));
+    setMethod(_request.substr(current_index, next_index - current_index));
 
     current_index = next_index + 1; // skip space
 
@@ -84,14 +84,14 @@ bool HTTPrequest::Parse() {
     // get protocol
     next_index = _request.find_first_of(CRLF, current_index);
     if (next_index == std::string::npos) {
-        log_error("Parse Failed: HTTP protocol not supported");
+        log_error("Parse Http Request Failed: HTTP protocol not supported");
         return false;
     }
     _protocol->set(_request.substr(current_index, next_index - current_index));
 
     current_index = next_index + 2; // skip CRLF '\r\n'
     if (_request.substr(current_index, 2) == CRLF) {
-        log_error("Parse Failed: No headers");
+        log_error("Parse Http Request Failed: No headers");
         return false;
     }
 
@@ -100,13 +100,13 @@ bool HTTPrequest::Parse() {
         // get each header
         next_index = _request.find_first_of(CRLF, current_index);
         if (next_index == std::string::npos) {
-            log_error("Parse Failed: Invalid header");
+            log_error("Parse Http Request Failed: Invalid header");
             return false;
         }
 
         int temp_index = _request.find_first_of(':', current_index);
         if (temp_index == std::string::npos || temp_index > next_index) {
-            log_error("Parse Failed: Invalid header, no \':\' between key and value.");
+            log_error("Parse Http Request Failed: Invalid header, no \':\' between key and value.");
             return false;
         }
 
@@ -119,11 +119,10 @@ bool HTTPrequest::Parse() {
 
     // get request body
     if (_request.length() < 2) {
-        log_error("Parse Failed: Wrong format after header.");
+        log_error("Parse Http Request Failed: Wrong format after header.");
         return false;
     }
     current_index += 2; // skip CRLF
-    // setRequestBody(_request.substr(current_index));
     _requestBody = _request.substr(current_index);
     
     return true;
@@ -137,7 +136,7 @@ void HTTPrequest::Build() {
      * <request-body>*/
     
     _request = "";
-    _request += _method->getString() + SPACE + _url + SPACE + _protocol->getString() + CRLF;
+    _request += getMethodString() + SPACE + getUrl() + SPACE + getProtocolString() + CRLF;
     
     for (auto header: _headers) {
         _request += header.first + ": " + header.second + CRLF;

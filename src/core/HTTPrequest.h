@@ -8,7 +8,6 @@
 #ifndef HTTPREQUEST_H
 #define	HTTPREQUEST_H
 
-#include <iostream>
 #include <string>
 #include <map>
 #include "http.h"
@@ -31,11 +30,13 @@ public:
     void setProtocol(std::string);
     std::string getProtocolString();
     Protocol getProtocol();
+    
     void setMethod(std::string);
     std::string getMethodString();
     Method getMethod();
-
-    void ShowData(void) const;
+    
+    void setUrl(std::string);
+    std::string getUrl();
     
 
 private:
