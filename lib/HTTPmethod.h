@@ -15,7 +15,6 @@
 class HTTPmethod {
 public:
     HTTPmethod();
-    HTTPmethod(const HTTPmethod& orig);
     virtual ~HTTPmethod();
     
     void set(std::string);

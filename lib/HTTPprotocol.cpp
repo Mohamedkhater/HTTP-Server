@@ -10,9 +10,6 @@
 HTTPprotocol::HTTPprotocol() {
 }
 
-HTTPprotocol::HTTPprotocol(const HTTPprotocol& orig) {
-}
-
 HTTPprotocol::~HTTPprotocol() {
 }
 

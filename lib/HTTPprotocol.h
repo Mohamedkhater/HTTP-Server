@@ -14,7 +14,6 @@
 class HTTPprotocol {
 public:
     HTTPprotocol();
-    HTTPprotocol(const HTTPprotocol& orig);
     virtual ~HTTPprotocol();
 
     void set(Protocol);

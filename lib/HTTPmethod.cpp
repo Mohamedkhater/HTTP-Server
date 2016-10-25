@@ -10,9 +10,6 @@
 HTTPmethod::HTTPmethod() {
 }
 
-HTTPmethod::HTTPmethod(const HTTPmethod& orig) {
-}
-
 HTTPmethod::~HTTPmethod() {
 }
 
