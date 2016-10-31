@@ -104,6 +104,8 @@ void ThreadPool::assignThread(int index) {
         }
 
     };
+    
+    this->_threads[index].reset(new std::thread(f));
 }
 
 void ThreadPool::interrupt() {
