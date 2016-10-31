@@ -48,4 +48,3 @@ private:
 };
 
 #endif	/* HTTPRESPONSE_H */
-

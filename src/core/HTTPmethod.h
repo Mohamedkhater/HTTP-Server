@@ -29,4 +29,3 @@ private:
 };
 
 #endif	/* HTTPMETHOD_H */
-

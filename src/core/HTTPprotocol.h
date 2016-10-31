@@ -28,4 +28,3 @@ private:
 };
 
 #endif	/* HTTPPROTOCOL_H */
-

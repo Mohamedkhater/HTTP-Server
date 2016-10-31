@@ -49,4 +49,3 @@ private:
 };
 
 #endif	/* HTTPREQUEST_H */
-

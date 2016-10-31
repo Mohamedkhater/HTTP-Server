@@ -71,7 +71,7 @@ bool HTTPrequest::Parse() {
         log_error("Parse Http Request Failed: Request method not implemented");
         return false;
     }
-    setMethod(_request.substr(current_index, next_index - current_index));
+    this->setMethod(_request.substr(current_index, next_index - current_index));
 
     current_index = next_index + 1; // skip space
 
@@ -87,7 +87,7 @@ bool HTTPrequest::Parse() {
         log_error("Parse Http Request Failed: HTTP protocol not supported");
         return false;
     }
-    _protocol->set(_request.substr(current_index, next_index - current_index));
+    this->setProtocol(_request.substr(current_index, next_index - current_index));
 
     current_index = next_index + 2; // skip CRLF '\r\n'
     if (_request.substr(current_index, 2) == CRLF) {
@@ -104,7 +104,7 @@ bool HTTPrequest::Parse() {
             return false;
         }
 
-        int temp_index = _request.find_first_of(':', current_index);
+        size_t temp_index = _request.find_first_of(':', current_index);
         if (temp_index == std::string::npos || temp_index > next_index) {
             log_error("Parse Http Request Failed: Invalid header, no \':\' between key and value.");
             return false;
@@ -136,7 +136,7 @@ void HTTPrequest::Build() {
      * <request-body>*/
     
     _request = "";
-    _request += getMethodString() + SPACE + _url + SPACE + getProtocolString() + CRLF;
+    _request += this->getMethodString() + SPACE + _url + SPACE + this->getProtocolString() + CRLF;
     
     for (auto header: _headers) {
         _request += header.first + ": " + header.second + CRLF;

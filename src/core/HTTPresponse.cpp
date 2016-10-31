@@ -23,7 +23,7 @@ void HTTPresponse::setStatusCode(int code) {
 
 void HTTPresponse::setStatusCode(std::string code_str) {
     int code = atoi(code_str.c_str());
-    setStatusCode(code);
+    this->setStatusCode(code);
 }
 
 std::string HTTPresponse::getStatus() {
@@ -65,7 +65,7 @@ void HTTPresponse::generateHeaders() {
     *cur_time_str.rbegin() = '\0';
 
     setHeader("Date", cur_time_str);
-    setHeader("Server", "Bibo HTTP Server"); 
+    setHeader("Server", "Bibo HTTP Server");
     setHeader("Accept-Ranges", "bytes");
     setHeader("Content-Type", getMimeType());
     setHeader("Connection", "close");
@@ -73,13 +73,14 @@ void HTTPresponse::generateHeaders() {
 
 void HTTPresponse::Build() {
     /* Response data format:
-     * <version> <status> <reason-phrase>CRLF
-     * <header>CRLF
+     * <version> <status> <reason-phrase> CRLF
+     * <header> CRLF
      * CRLF
      * <body> */
 
     _response = "";
-    _response += getProtocolString() + SPACE + std::to_string(getStatusCode()) + SPACE + getStatus() + CRLF;
+    _response += this->getProtocolString() + SPACE + std::to_string(this->getStatusCode()) + 
+            SPACE + this->getStatus() + CRLF;
 
     for (auto header : _headers) {
         _response += header.first + ": " + header.second + CRLF;
@@ -91,12 +92,12 @@ void HTTPresponse::Build() {
 
 bool HTTPresponse::Parse() {
     /* Response data format:
-     * <version> <status> <reason-phrase>CRLF
-     * <headers>CRLF
+     * <version> <status> <reason-phrase> CRLF
+     * <headers> CRLF
      * CRLF
      * <body>*/
 
-    int current_index = 0, next_index;
+    size_t current_index = 0, next_index;
 
     // get protocol
     next_index = _response.find_first_of(SPACE, current_index);
@@ -104,7 +105,7 @@ bool HTTPresponse::Parse() {
         log_error("Parse Http Response Failed: Response protocol not implemented.");
         return false;
     }
-    setProtocol(_response.substr(current_index, next_index - current_index));
+    this->setProtocol(_response.substr(current_index, next_index - current_index));
 
     current_index = next_index + 1; // skip space
 
@@ -114,14 +115,14 @@ bool HTTPresponse::Parse() {
         log_error("Parse Http Response Failed: Status code not implemented.");
         return false;
     }
-    setStatusCode(_response.substr(current_index, next_index - current_index));
+    this->setStatusCode(_response.substr(current_index, next_index - current_index));
 
     current_index = next_index + 1; // skip space
 
     next_index = _response.find_first_of(CRLF, current_index);
     // no need to get status message
     current_index = next_index + 2; // skip CRLF
-    
+
     if (_response.substr(current_index, 2) == CRLF) {
         log_error("Parse Http Response Failed: No headers");
         return false;
@@ -134,15 +135,15 @@ bool HTTPresponse::Parse() {
             log_error("Parse Http Response Failed: Invalid header.");
             return false;
         }
-        std::string header = _response.substr(current_index, next_index - current_index);
-        int temp_index = _response.find_first_of(':', current_index);
+        
+        size_t temp_index = _response.find_first_of(':', current_index);
         if (temp_index == std::string::npos || temp_index > next_index) {
             log_error("Parse Http Response Failed: Invalid header, no \':\' between key and value.");
             return false;
         }
-        setHeader(trim(_response.substr(current_index, temp_index - current_index)),
-                  trim(_response.substr(temp_index + 1, next_index - (temp_index + 1))));
-        
+        this->setHeader(trim(_response.substr(current_index, temp_index - current_index)),
+                trim(_response.substr(temp_index + 1, next_index - (temp_index + 1))));
+
         current_index = next_index + 2;
     }
 
@@ -151,8 +152,7 @@ bool HTTPresponse::Parse() {
         log_error("Parse Http Response Failed: Wrong format after header.");
         return false;
     }
-    
+
     current_index += 2; // skip CRLF
     _responseBody = _response.substr(current_index);
 }
-

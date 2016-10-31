@@ -19,11 +19,11 @@ void HTTPprotocol::set(Protocol protocol) {
 
 void HTTPprotocol::set(std::string protocol) {
     if (protocol == "HTTP/1.0") {
-        set(HTTP1_0);
+        this->set(HTTP1_0);
     } else if (protocol == "HTTP/1.1") {
-        set(HTTP1_1);
+        this->set(HTTP1_1);
     } else {
-        set(UNSUPPORTED);
+        this->set(UNSUPPORTED);
     }
 }
 

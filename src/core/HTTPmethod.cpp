@@ -16,17 +16,17 @@ HTTPmethod::~HTTPmethod() {
 void HTTPmethod::set(std::string method) {
     std::transform(method.begin(), method.end(), method.begin(), ::toupper);
     if (method == "GET") {
-        set(GET);
+        this->set(GET);
     } else if (method == "POST") {
-        set(POST);
+        this->set(POST);
     } else if (method == "HEAD") {
-        set(HEAD);
+        this->set(HEAD);
     } else if (method == "PUT") {
-        set(PUT);
+        this->set(PUT);
     } else if (method == "DELETE") {
-        set(DELETE);
+        this->set(DELETE);
     } else {
-        set(NOT_IMPLEMENTED);
+        this->set(NOT_IMPLEMENTED);
     }
 }
 

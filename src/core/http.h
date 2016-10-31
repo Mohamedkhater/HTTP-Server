@@ -24,4 +24,3 @@ void log_error(std::string);
 std::string trim(std::string);
 
 #endif	/* HTTP_H */
-

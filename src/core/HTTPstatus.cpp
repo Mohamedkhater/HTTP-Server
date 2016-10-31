@@ -25,7 +25,7 @@ int HTTPstatus::getStatusCode() {
 
 void HTTPstatus::setStatusCode(int status_code) {
     _status_code = status_code;
-    setStatus();
+    this->setStatus();
 }
 
 void HTTPstatus::setStatus() {
@@ -55,7 +55,3 @@ void HTTPstatus::setStatus() {
         _status_string = "HTTP Version Not Supported";
     }
 }
-
-
-
-
