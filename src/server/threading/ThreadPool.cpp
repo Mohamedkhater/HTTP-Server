@@ -19,10 +19,10 @@ auto ThreadPool::push(Function&& function) -> std::future<decltype(function(0))>
     // make a pointer to the packaged (wrapped) task
     // we pass the function using std::forward to pass as rvalue
     auto package =
-            std::make_shared < std::packaged_task < decltype(function(0)) (size_t)>> (std::forward<Function>(function));
+            std::make_shared< std::packaged_task < decltype(function(0)) (size_t) > > (std::forward<Function>(function));
 
     // send thread id to the task
-    auto _function = new std::function<void(int) >([package](int id) {
+    auto _function = new std::function<void(int)>([package](int id) {
         (*package)(id);
     });
 
@@ -41,12 +41,12 @@ template<typename Function, typename... Params>
 auto ThreadPool::push(Function&& function, Params&&... params) -> std::future<decltype(function(0, params...))> {
     // make a pointer to the packaged (wrapped) task
     // we pass the function using std::forward to pass as rvalue
-    auto package = std::make_shared < std::packaged_task < decltype(function(0)) (size_t)>> (
+    auto package = std::make_shared< std::packaged_task < decltype(function(0)) (size_t) > > (
             std::bind(std::forward<Function>(function), std::placeholders::_1, std::forward<Params>(params)...)
             );
 
     // send thread id to the task
-    auto _function = new std::function<void(int) >([package](int id) {
+    auto _function = new std::function<void(int)>([package](int id) {
         (*package)(id);
     });
 
@@ -62,13 +62,13 @@ auto ThreadPool::push(Function&& function, Params&&... params) -> std::future<de
 };
 
 void ThreadPool::assignThread(int index) {
-    std::shared_ptr < std::atomic<bool>> abort_ptr(this->_abort[index]);
+    std::shared_ptr< std::atomic<bool> > abort_ptr(this->_abort[index]);
 
     auto f = [this, index, abort_ptr]() {
-        std::atomic<bool> & abort = *abort_ptr;
+        std::atomic<bool>& abort = *abort_ptr;
 
         // get a task from queue
-        std::function<void(int) > * _function = nullptr;
+        std::function<void(int)> * _function = nullptr;
         _function = this->_queue.pop();
 
         // always pop a function from the queue
@@ -77,7 +77,7 @@ void ThreadPool::assignThread(int index) {
             while (_function != nullptr) {
                 // convert _function to a smart pointer to 
                 // delete ptr after thread finishes
-                std::unique_ptr < std::function<void(int) >> func(_function);
+                std::unique_ptr< std::function<void(int)> > func(_function);
 
                 // call the function
                 (*_function)(index);
@@ -100,9 +100,7 @@ void ThreadPool::assignThread(int index) {
 
             if (_function == nullptr)
                 return;
-
         }
-
     };
     
     this->_threads[index].reset(new std::thread(f));
