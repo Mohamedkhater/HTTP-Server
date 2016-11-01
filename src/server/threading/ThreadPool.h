@@ -8,7 +8,7 @@
 #ifndef THREADPOOL_H
 #define	THREADPOOL_H
 
-#include "FunctionQueue.h"
+//#include "FunctionQueue.h"
 
 #include <queue>
 #include <mutex>
@@ -56,14 +56,19 @@ private:
     // assign a thread to a task
     void assignThread(int index);
 
+    void pushToQueue(std::function<void(int) > *);
+    std::function<void(int) > * popFromQueue();
+    void clearQueue();
+    bool isQueueEmpty();
 
     // attributes
-    FunctionQueue<std::function<void(int) > *> _queue;
-    std::vector<std::shared_ptr<std::thread>> _threads;
-    std::vector<std::shared_ptr<std::atomic<bool>>> _abort; // abort thread
+    std::queue< std::function<void(int) > * > * _queue;
+    std::vector< std::shared_ptr< std::thread > > _threads;
+    std::vector< std::shared_ptr< std::atomic<bool> > > _abort; // abort thread
 
     std::atomic<int> _idleCount;
     std::mutex _mutex;
+    std::mutex _queueMutex;
     std::condition_variable _condition;
 
 };
