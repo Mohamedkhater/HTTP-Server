@@ -30,8 +30,6 @@ void ThreadPool::pushToQueue(std::function<void(int)> * function) {
 }
 
 void ThreadPool::clearQueue() {
-    // std::function<void(int)> * function = nullptr;
-
     while (!this->isQueueEmpty()) {
         this->_queue->pop();
     }
@@ -95,9 +93,8 @@ void ThreadPool::assignThread(int index) {
         std::atomic<bool>& abort = *abort_ptr;
 
         // get a task from queue
-        std::function<void(int)> * _function;
-
-        _function = this->popFromQueue();
+        // returns nullptr if empty
+        std::function<void(int)> * _function = this->popFromQueue();
 
         // always pop a function from the queue
         // as long as it is not empty or there is no abort command
