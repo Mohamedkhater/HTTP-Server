@@ -6,10 +6,9 @@
  */
 
 #ifndef THREADPOOL_H
-#define	THREADPOOL_H
+#define THREADPOOL_H
 
-//#include "FunctionQueue.h"
-
+#include <iostream>
 #include <queue>
 #include <mutex>
 #include <functional>
@@ -19,11 +18,14 @@
 #include <vector>
 #include <exception>
 #include <condition_variable>
+#include <assert.h>
+
+#include "FunctionQueue.h"
 
 class ThreadPool {
 public:
     ThreadPool();
-    // ThreadPool(int);
+    ThreadPool(size_t);
     virtual ~ThreadPool();
 
     // auto multiply (int x, int y) -> int; \\ int multiply (int x, int y);
@@ -48,30 +50,37 @@ public:
     template<typename Function, typename... Params>
     auto push(Function&& function, Params&&... params) -> std::future<decltype(function(0, params...))>;
 
-    // stop all threads
+    /**
+     *  wait for all running threads to finish and stop all threads
+     *  may be called asynchronously to not pause the calling thread while waiting
+     * */
     void interrupt();
 
 
 private:
-    // assign a thread to a task
-    void assignThread(int index);
 
-    void pushToQueue(std::function<void(int) > *);
-    std::function<void(int) > * popFromQueue();
-    void clearQueue();
-    bool isQueueEmpty();
+    ThreadPool(const ThreadPool &);
+    ThreadPool(ThreadPool &&);
+    ThreadPool & operator=(const ThreadPool &);
+    ThreadPool & operator=(ThreadPool &&);
+
+    // assign a thread to a task
+    void assignThread(size_t);
+
+    //
+    void make(size_t);
 
     // attributes
-    std::queue< std::function<void(int) > * > * _queue;
+    FunctionQueue<std::function<void(size_t) > *> * _queue;
     std::vector< std::shared_ptr< std::thread > > _threads;
     std::vector< std::shared_ptr< std::atomic<bool> > > _abort; // abort thread
 
-    std::atomic<int> _idleCount;
+    std::atomic<size_t> _idleCount;
     std::mutex _mutex;
     std::mutex _queueMutex;
     std::condition_variable _condition;
 
 };
 
-#endif	/* THREADPOOL_H */
+#endif /* THREADPOOL_H */
 

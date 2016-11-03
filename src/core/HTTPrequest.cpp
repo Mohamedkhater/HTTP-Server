@@ -124,7 +124,7 @@ bool HTTPrequest::Parse() {
     }
     current_index += 2; // skip CRLF
     _requestBody = _request.substr(current_index);
-    
+
     return true;
 }
 
@@ -134,15 +134,15 @@ void HTTPrequest::Build() {
      * <headers> CRLF
      * CRLF
      * <request-body>*/
-    
+
     _request = "";
     _request += this->getMethodString() + SPACE + _url + SPACE + this->getProtocolString() + CRLF;
-    
-    for (auto header: _headers) {
+
+    for (auto header : _headers) {
         _request += header.first + ": " + header.second + CRLF;
     }
-    
+
     _request += CRLF;
     _request += _requestBody;
-    
+
 }

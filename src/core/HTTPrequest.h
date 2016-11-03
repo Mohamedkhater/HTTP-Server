@@ -1,4 +1,4 @@
-/* 
+/*
  * File:   HTTPrequest.h
  * Author: amr
  *
@@ -6,7 +6,7 @@
  */
 
 #ifndef HTTPREQUEST_H
-#define	HTTPREQUEST_H
+#define HTTPREQUEST_H
 
 #include <string>
 #include <map>
@@ -30,14 +30,14 @@ public:
     void setProtocol(std::string);
     std::string getProtocolString();
     Protocol getProtocol();
-    
+
     void setMethod(std::string);
     std::string getMethodString();
     Method getMethod();
-    
+
     void setUrl(std::string);
     std::string getUrl();
-    
+
 
 private:
     std::string _url;
@@ -48,4 +48,4 @@ private:
     std::map<std::string, std::string> _headers;
 };
 
-#endif	/* HTTPREQUEST_H */
+#endif /* HTTPREQUEST_H */

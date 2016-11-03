@@ -14,7 +14,7 @@ HTTPresponse::~HTTPresponse() {
 }
 
 int HTTPresponse::getStatusCode() {
-
+    return _status->getStatusCode();
 }
 
 void HTTPresponse::setStatusCode(int code) {
@@ -79,7 +79,7 @@ void HTTPresponse::Build() {
      * <body> */
 
     _response = "";
-    _response += this->getProtocolString() + SPACE + std::to_string(this->getStatusCode()) + 
+    _response += this->getProtocolString() + SPACE + std::to_string(this->getStatusCode()) +
             SPACE + this->getStatus() + CRLF;
 
     for (auto header : _headers) {
@@ -135,7 +135,7 @@ bool HTTPresponse::Parse() {
             log_error("Parse Http Response Failed: Invalid header.");
             return false;
         }
-        
+
         size_t temp_index = _response.find_first_of(':', current_index);
         if (temp_index == std::string::npos || temp_index > next_index) {
             log_error("Parse Http Response Failed: Invalid header, no \':\' between key and value.");
@@ -155,4 +155,6 @@ bool HTTPresponse::Parse() {
 
     current_index += 2; // skip CRLF
     _responseBody = _response.substr(current_index);
+    
+    return true;
 }

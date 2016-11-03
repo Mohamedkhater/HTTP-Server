@@ -1,7 +1,7 @@
-/* 
+/*
  * File:   HTTPmethod.cpp
  * Author: amr
- * 
+ *
  * Created on October 24, 2016, 10:05 PM
  */
 
@@ -15,6 +15,7 @@ HTTPmethod::~HTTPmethod() {
 
 void HTTPmethod::set(std::string method) {
     std::transform(method.begin(), method.end(), method.begin(), ::toupper);
+
     if (method == "GET") {
         this->set(GET);
     } else if (method == "POST") {
@@ -50,5 +51,6 @@ std::string HTTPmethod::getString() {
     } else if (_method == DELETE) {
         return "DELETE";
     }
+
     return "NOT_IMPLEMENTED";
 }

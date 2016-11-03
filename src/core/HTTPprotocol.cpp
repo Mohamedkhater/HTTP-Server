@@ -1,7 +1,7 @@
-/* 
+/*
  * File:   HTTPprotocol.cpp
  * Author: amr
- * 
+ *
  * Created on October 24, 2016, 11:17 PM
  */
 
@@ -32,13 +32,11 @@ Protocol HTTPprotocol::get() {
 }
 
 std::string HTTPprotocol::getString() {
-    if(_protocol == HTTP1_0) {
+    if (_protocol == HTTP1_0) {
         return "HTTP/1.0";
-    }
-    else if(_protocol == HTTP1_1) {
+    } else if (_protocol == HTTP1_1) {
         return "HTTP/1.1";
-    }
-    else {
+    } else {
         return "UNSUPPORTED";
     }
 }

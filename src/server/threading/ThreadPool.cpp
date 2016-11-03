@@ -9,34 +9,16 @@
 
 ThreadPool::ThreadPool() {
     this->_idleCount = 0;
+    this->make(3);
+}
+
+ThreadPool::ThreadPool(size_t threadsCount = 3) {
+    this->_idleCount = 0;
+    this->make(threadsCount);
 }
 
 ThreadPool::~ThreadPool() {
-}
-
-std::function<void(int)>* ThreadPool::popFromQueue() {
-    std::unique_lock<std::mutex> lock(_queueMutex);
-    std::function<void(int)> * function = nullptr;
-    if (!this->isQueueEmpty()) {
-        function = this->_queue->front();
-        this->_queue->pop();
-    }
-    return function;
-}
-
-void ThreadPool::pushToQueue(std::function<void(int)> * function) {
-    std::unique_lock<std::mutex> lock(_queueMutex);
-    this->_queue->push(function);
-}
-
-void ThreadPool::clearQueue() {
-    while (!this->isQueueEmpty()) {
-        this->_queue->pop();
-    }
-}
-
-bool ThreadPool::isQueueEmpty() {
-    return this->_queue->empty();
+    this->interrupt();
 }
 
 template<typename Function>
@@ -47,12 +29,12 @@ auto ThreadPool::push(Function&& function) -> std::future<decltype(function(0))>
             std::make_shared < std::packaged_task < decltype(function(0)) (size_t) > > (std::forward<Function>(function));
 
     // send thread id to the task
-    auto _function = new std::function<void(int)>([package](int id) {
+    auto _function = new std::function<void(size_t)>([package](size_t id) {
         (*package)(id);
     });
 
     // add to queue
-    this->pushToQueue(_function);
+    this->_queue->push(_function);
 
     std::unique_lock<std::mutex> lock(this->_mutex);
     // wake up a thread to run the function
@@ -71,12 +53,12 @@ auto ThreadPool::push(Function&& function, Params&&... params) -> std::future<de
             );
 
     // send thread id to the task
-    auto _function = new std::function<void(int)>([package](int id) {
+    auto _function = new std::function<void(size_t)>([package](size_t id) {
         (*package)(id);
     });
 
     // add to queue
-    this->pushToQueue(_function);
+    this->_queue->push(_function);
 
     std::unique_lock<std::mutex> lock(this->_mutex);
     // wake up a thread to run the function
@@ -84,9 +66,9 @@ auto ThreadPool::push(Function&& function, Params&&... params) -> std::future<de
 
     // return function return value
     return package->get_future();
-};
+}
 
-void ThreadPool::assignThread(int index) {
+void ThreadPool::assignThread(size_t index) {
     std::shared_ptr < std::atomic<bool> > abort_ptr(this->_abort[index]);
 
     auto f = [this, index, abort_ptr]() {
@@ -94,7 +76,7 @@ void ThreadPool::assignThread(int index) {
 
         // get a task from queue
         // returns nullptr if empty
-        std::function<void(int)> * _function = this->popFromQueue();
+        std::function<void(size_t)> * _function; // = this->_queue->pop();
 
         // always pop a function from the queue
         // as long as it is not empty or there is no abort command
@@ -102,7 +84,7 @@ void ThreadPool::assignThread(int index) {
             while (_function != nullptr) {
                 // convert _function to a smart pointer to 
                 // delete ptr after thread finishes
-                std::unique_ptr < std::function<void(int)> > func(_function);
+                std::unique_ptr < std::function<void(size_t id)> > func(_function);
 
                 // call the function
                 (*_function)(index);
@@ -110,9 +92,8 @@ void ThreadPool::assignThread(int index) {
                 if (abort)
                     return;
                 else {
-                    _function = this->popFromQueue();
                 }
-
+                // _function = this->_queue->pop();
             }
 
             // queue is empty, wait for a function to be pushed
@@ -120,7 +101,7 @@ void ThreadPool::assignThread(int index) {
             std::unique_lock<std::mutex> lock(this->_mutex);
             ++this->_idleCount;
             this->_condition.wait(lock, [this, &_function, &abort]() {
-                _function = this->popFromQueue();
+                //                _function = this->_queue->pop();
                 return abort || (_function != nullptr);
             });
             --this->_idleCount;
@@ -134,5 +115,35 @@ void ThreadPool::assignThread(int index) {
 }
 
 void ThreadPool::interrupt() {
+    {
+        std::unique_lock<std::mutex> lock(this->_mutex);
+        this->_condition.notify_all(); // stop all waiting threads
+    }
 
+    // wait for the running threads to finish
+    for (size_t i = 0; i < _threads.size(); ++i) {
+        if (_threads[i]->joinable())
+            _threads[i]->join();
+    }
+
+//    this->_queue->clear();
+
+    _threads.clear();
+    _abort.clear();
 }
+
+// TODO: edit to resize
+
+void ThreadPool::make(size_t threadsCount) {
+    size_t oldthreadsCount = _threads.size();
+    assert(oldthreadsCount <= threadsCount);
+
+    _threads.resize(threadsCount);
+    _abort.resize(threadsCount);
+
+    for (size_t i = oldthreadsCount; i < threadsCount; ++i) {
+        _abort[i] = std::make_shared < std::atomic<bool>>(false);
+        this->assignThread(i);
+    }
+}
+

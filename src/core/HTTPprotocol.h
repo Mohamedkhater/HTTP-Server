@@ -1,4 +1,4 @@
-/* 
+/*
  * File:   HTTPprotocol.h
  * Author: amr
  *
@@ -6,25 +6,30 @@
  */
 
 #ifndef HTTPPROTOCOL_H
-#define	HTTPPROTOCOL_H
+#define HTTPPROTOCOL_H
 
 #include "http.h"
 #include <string>
 
-class HTTPprotocol {
-public:
-    HTTPprotocol();
-    virtual ~HTTPprotocol();
+class HTTPprotocol
+{
+    public:
+        HTTPprotocol();
 
-    void set(Protocol);
-    void set(std::string);
+        virtual ~HTTPprotocol();
 
-    Protocol get();
-    std::string getString();
+        void set(Protocol);
 
-private:
-    Protocol _protocol;
+        void set(std::string);
 
+        Protocol get();
+
+        std::string getString();
+
+    private:
+        Protocol _protocol;
 };
+#endif   /* HTTPPROTOCOL_H */
 
-#endif	/* HTTPPROTOCOL_H */
+
+//~ Formatted by Jindent --- http://www.jindent.com

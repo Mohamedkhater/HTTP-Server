@@ -1,7 +1,7 @@
-/* 
+/*
  * File:   HTTPstatus.cpp
  * Author: amr
- * 
+ *
  * Created on October 25, 2016, 2:15 AM
  */
 
