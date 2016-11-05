@@ -19,6 +19,7 @@
 #include <sys/types.h> // type (mainly time) definitions
 #include <sys/socket.h> // sockets definitions
 #include <netinet/in.h> // internet domain addresses definitions
+#include <arpa/inet.h>
 
 #include "Log.h"
 #include "SocketException.h"
@@ -37,6 +38,7 @@ protected:
 private:
     int _fileDescriptor;
     Log socketLogFile;
+    bool _debug;
 };
 
 #endif /* SOCKET_H */

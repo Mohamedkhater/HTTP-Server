@@ -14,10 +14,12 @@
 #include "GenericSocket.h"
 
 GenericSocket::GenericSocket() : socketLogFile() {
+    _debug = true;
 }
 
 GenericSocket::GenericSocket(int fileDescriptor) : socketLogFile() {
     this->setSocket(fileDescriptor);
+    _debug = true;
 }
 
 GenericSocket::~GenericSocket() {
@@ -34,7 +36,8 @@ int GenericSocket::getSocket() {
 }
 
 void GenericSocket::log(const std::string message) {
-    std::cout << message << std::endl;
+    if (_debug)
+        std::cout << message << std::endl;
     socketLogFile.write(message);
 }
 
