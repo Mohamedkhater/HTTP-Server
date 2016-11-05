@@ -56,6 +56,14 @@ Method HTTPrequest::getMethod() {
     return _method->get();
 }
 
+std::string HTTPrequest::getUrl() {
+    return _url;
+}
+
+void HTTPrequest::setUrl(std::string url) {
+    this->_url = url;
+}
+
 bool HTTPrequest::Parse() {
     /* http request format:
      * <method> <request-URL> <version> CRLF
@@ -77,7 +85,7 @@ bool HTTPrequest::Parse() {
 
     // get url
     next_index = _request.find_first_of(SPACE, current_index);
-    _url = _request.substr(current_index, next_index - current_index);
+    this->setUrl(_request.substr(current_index, next_index - current_index));
 
     current_index = next_index + 1; // skip space
 

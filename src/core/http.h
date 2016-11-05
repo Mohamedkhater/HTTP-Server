@@ -1,33 +1,25 @@
 /*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+/* 
  * File:   http.h
- * Author: amr
+ * Author: root
  *
- * Created on October 24, 2016, 9:42 PM
+ * Created on November 4, 2016, 10:08 PM
  */
 
 #ifndef HTTP_H
 #define HTTP_H
 
-#include <string>
-#include <algorithm>
+#include "HTTPmethod.h"
+#include "HTTPprotocol.h"
+#include "HTTPrequest.h"
+#include "HTTPresponse.h"
+#include "HTTPstatus.h"
+#include "httpCore.h"
 
-#define SPACE ' '
-#define CRLF "\r\n"
-#define root "../www/"
-#define debug_mode true
-enum Method
-{
-    HEAD, GET, POST, PUT, DELETE, NOT_IMPLEMENTED
-};
+#endif /* HTTP_H */
 
-enum Protocol { HTTP1_0, HTTP1_1, UNSUPPORTED };
-
-std::string extractMime(std::string);
-
-void log_error(std::string);
-
-std::string trim(std::string);
-#endif   /* HTTP_H */
-
-
-//~ Formatted by Jindent --- http://www.jindent.com

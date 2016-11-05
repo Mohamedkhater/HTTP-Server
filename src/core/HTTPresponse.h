@@ -6,7 +6,7 @@
  */
 
 #ifndef HTTPRESPONSE_H
-#define	HTTPRESPONSE_H
+#define HTTPRESPONSE_H
 
 #include <string>
 #include <map>
@@ -21,6 +21,7 @@ public:
     void setHeader(std::string, std::string);
     std::string getHeader(std::string);
     void generateHeaders();
+    std::string get();
     bool Parse();
     void Build();
 
@@ -37,6 +38,8 @@ public:
     void setMimeType(std::string);
     std::string getMimeType();
 
+    void setResponseBody(std::string);
+
 private:
     HTTPstatus* _status;
     HTTPprotocol* _protocol;
@@ -44,7 +47,7 @@ private:
     std::string _responseBody;
     std::string _response;
     std::map<std::string, std::string> _headers;
-    
+
 };
 
-#endif	/* HTTPRESPONSE_H */
+#endif /* HTTPRESPONSE_H */

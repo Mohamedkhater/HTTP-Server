@@ -10,7 +10,7 @@
 
 #include <string>
 #include <map>
-#include "http.h"
+#include "httpCore.h"
 #include "HTTPmethod.h"
 #include "HTTPprotocol.h"
 

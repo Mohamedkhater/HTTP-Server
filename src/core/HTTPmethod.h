@@ -10,7 +10,7 @@
 
 #include <string>
 #include <algorithm>
-#include "http.h"
+#include "httpCore.h"
 
 class HTTPmethod {
 public:

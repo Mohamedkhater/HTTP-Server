@@ -8,6 +8,12 @@
 #include "HTTPresponse.h"
 
 HTTPresponse::HTTPresponse() {
+    _protocol = new HTTPprotocol();
+    _status = new HTTPstatus();
+    _mime_type.clear();
+    _responseBody.clear();
+    _response.clear();
+    _headers.clear();
 }
 
 HTTPresponse::~HTTPresponse() {
@@ -58,6 +64,14 @@ void HTTPresponse::setMimeType(std::string mime_type) {
     _mime_type = mime_type;
 }
 
+void HTTPresponse::setResponseBody(std::string body) {
+    _responseBody = body;
+}
+
+std::string HTTPresponse::get() {
+    return _response;
+}
+
 void HTTPresponse::generateHeaders() {
     time_t cur_time;
     time(&cur_time);
@@ -68,7 +82,8 @@ void HTTPresponse::generateHeaders() {
     setHeader("Server", "Bibo HTTP Server");
     setHeader("Accept-Ranges", "bytes");
     setHeader("Content-Type", getMimeType());
-    setHeader("Connection", "close");
+    setHeader("Content-Length", std::to_string(_responseBody.length()));
+//    setHeader("Connection", "close");
 }
 
 void HTTPresponse::Build() {
@@ -77,6 +92,8 @@ void HTTPresponse::Build() {
      * <header> CRLF
      * CRLF
      * <body> */
+
+    generateHeaders();
 
     _response = "";
     _response += this->getProtocolString() + SPACE + std::to_string(this->getStatusCode()) +
@@ -155,6 +172,6 @@ bool HTTPresponse::Parse() {
 
     current_index += 2; // skip CRLF
     _responseBody = _response.substr(current_index);
-    
+
     return true;
 }

@@ -8,28 +8,21 @@
 #ifndef HTTPPROTOCOL_H
 #define HTTPPROTOCOL_H
 
-#include "http.h"
+#include "httpCore.h"
 #include <string>
 
-class HTTPprotocol
-{
-    public:
-        HTTPprotocol();
+class HTTPprotocol {
+public:
+    HTTPprotocol();
+    virtual ~HTTPprotocol();
 
-        virtual ~HTTPprotocol();
+    void set(Protocol);
+    void set(std::string);
+    Protocol get();
+    std::string getString();
 
-        void set(Protocol);
-
-        void set(std::string);
-
-        Protocol get();
-
-        std::string getString();
-
-    private:
-        Protocol _protocol;
+private:
+    Protocol _protocol;
 };
 #endif   /* HTTPPROTOCOL_H */
 
-
-//~ Formatted by Jindent --- http://www.jindent.com

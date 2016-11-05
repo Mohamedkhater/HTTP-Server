@@ -48,7 +48,7 @@ void HTTPstatus::setStatus() {
     } else if (_status_code == 500) {
         _status_string = "Internal Server Error";
     } else if (_status_code == 501) {
-        _status_string = "Not Implemented";
+        _status_string = "Method Not Implemented";
     } else if (_status_code == 502) {
         _status_string = "Bad Gateway";
     } else if (_status_code == 505) {
