@@ -32,9 +32,11 @@ public:
     virtual ~Socket();
 
     void sendMessage(std::string);
+    int sendFile(std::string);
     std::string fetchMessage();
-
+    
     void setSocket(int);
+    int getSocket();
 
 protected:
     Socket();
@@ -51,7 +53,10 @@ private:
 
     int bufferSize;
     unsigned char* buffer;
-
+    
+    // for timeout
+    fd_set readfds;
+    struct timeval tv;
 };
 
 #endif /* SOCKET_H */

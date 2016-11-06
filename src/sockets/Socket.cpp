@@ -18,6 +18,12 @@
 Socket::Socket() {
     bufferSize = BUFFER_SIZE;
     buffer = new unsigned char [bufferSize];
+
+    FD_ZERO(&readfds);
+    FD_SET(getSocket(), &readfds);
+
+    tv.tv_sec = 10;
+    tv.tv_usec = 500000;
 }
 
 Socket::~Socket() {
@@ -26,6 +32,10 @@ Socket::~Socket() {
 
 void Socket::setSocket(int socket) {
     GenericSocket::setSocket(socket);
+}
+
+int Socket::getSocket() {
+    return GenericSocket::getSocket();
 }
 
 void Socket::readMessage(int length) {
@@ -42,6 +52,13 @@ void Socket::readMessage(int length) {
     std::fill(buffer, buffer + bufferSize, 0);
 
     while (totalBytesRead < length) {
+
+        int rv = ::select(getSocket() + 1, &readfds, NULL, NULL, &tv);
+
+        if (rv == 0) {
+            ::close(getSocket());
+        }
+
         bytesRead = read(getSocket(), buffer + totalBytesRead, length - totalBytesRead); //Read the sent message.
 
         if (bytesRead < 0)
@@ -69,13 +86,22 @@ void Socket::writeMessage(const unsigned char* message, int length) {
         if (bytesWritten < 0)
             throw SocketException("Message Writing: Error writing message");
         else if (bytesWritten == 0)
-            throw SocketException("Message Length Writing: Client disconnected");
+            throw SocketException("Message Writing: Client disconnected");
 
         totalBytesWritten += bytesWritten;
 
         if (bytesWritten < length)
             break;
     }
+}
+
+int Socket::sendFile(std::string fileUrl) {
+    int f = open(fileUrl.c_str(), O_RDONLY);
+    struct stat stat_buf;
+    fstat(f, &stat_buf);
+    sendfile(getSocket(), f, 0, stat_buf.st_size);
+
+    return (int) (stat_buf.st_size);
 }
 
 const unsigned char* Socket::getMessage() {
@@ -93,6 +119,12 @@ void Socket::sendMessage(const unsigned char* message, int length) {
 Socket::Socket(int socket) : GenericSocket(socket) {
     bufferSize = BUFFER_SIZE;
     buffer = new unsigned char [bufferSize];
+
+    FD_ZERO(&readfds);
+    FD_SET(getSocket(), &readfds);
+
+    tv.tv_sec = 10;
+    tv.tv_usec = 500000;
 }
 
 void Socket::sendMessage(std::string message) {
