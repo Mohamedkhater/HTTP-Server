@@ -6,6 +6,7 @@
  */
 
 #include <iostream>
+#include <string>
 
 #include "src/server/Server.h"
 
@@ -13,7 +14,7 @@
  *
  */
 int main(int argc, char ** argv) {
-    Server* server = new Server(4001);
+    Server* server = new Server(4000);
     server->run();
 
     return 0;
