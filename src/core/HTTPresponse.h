@@ -39,6 +39,8 @@ public:
     std::string getMimeType();
 
     void setResponseBody(std::string);
+    
+    void setContentLength(int);
 
 private:
     HTTPstatus* _status;
@@ -47,6 +49,7 @@ private:
     std::string _responseBody;
     std::string _response;
     std::map<std::string, std::string> _headers;
+    int _contentLength;
 
 };
 

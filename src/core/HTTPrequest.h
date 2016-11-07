@@ -19,7 +19,6 @@ public:
     HTTPrequest();
     virtual ~HTTPrequest();
 
-
     void set(std::string);
     std::string get();
     void setHeader(std::string, std::string);
@@ -37,6 +36,8 @@ public:
 
     void setUrl(std::string);
     std::string getUrl();
+
+    std::string getRequestBody();
 
 
 private:

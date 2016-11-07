@@ -14,6 +14,7 @@ HTTPresponse::HTTPresponse() {
     _responseBody.clear();
     _response.clear();
     _headers.clear();
+    _contentLength = -1;
 }
 
 HTTPresponse::~HTTPresponse() {
@@ -68,6 +69,10 @@ void HTTPresponse::setResponseBody(std::string body) {
     _responseBody = body;
 }
 
+void HTTPresponse::setContentLength(int length) {
+    _contentLength = length;
+}
+
 std::string HTTPresponse::get() {
     return _response;
 }
@@ -78,12 +83,14 @@ void HTTPresponse::generateHeaders() {
     std::string cur_time_str = ctime(&cur_time);
     *cur_time_str.rbegin() = '\0';
 
+    _contentLength = (_contentLength == -1) ? _responseBody.length() : _contentLength;
+
     setHeader("Date", cur_time_str);
     setHeader("Server", "Bibo HTTP Server");
     setHeader("Accept-Ranges", "bytes");
     setHeader("Content-Type", getMimeType());
-    setHeader("Content-Length", std::to_string(_responseBody.length()));
-//    setHeader("Connection", "close");
+    setHeader("Content-Length", std::to_string(_contentLength));
+    setHeader("Connection", "Keep-Alive");
 }
 
 void HTTPresponse::Build() {

@@ -64,6 +64,10 @@ void HTTPrequest::setUrl(std::string url) {
     this->_url = url;
 }
 
+std::string HTTPrequest::getRequestBody() {
+    return _requestBody;
+}
+
 bool HTTPrequest::Parse() {
     /* http request format:
      * <method> <request-URL> <version> CRLF
@@ -114,7 +118,7 @@ bool HTTPrequest::Parse() {
 
         size_t temp_index = _request.find_first_of(':', current_index);
         if (temp_index == std::string::npos || temp_index > next_index) {
-            log_error("Parse Http Request Failed: Invalid header, no \':\' between key and value.");
+            log_error("Parse Http Request Failed: Invalid header, no \':\' between key and value");
             return false;
         }
 
@@ -127,7 +131,7 @@ bool HTTPrequest::Parse() {
 
     // get request body
     if (_request.length() < 2) {
-        log_error("Parse Http Request Failed: Wrong format after header.");
+        log_error("Parse Http Request Failed: Wrong format after header");
         return false;
     }
     current_index += 2; // skip CRLF

@@ -54,8 +54,8 @@ std::string extractMime(std::string fileName) {
         // application mime
     else if ((extension == "bin") || (extension == "exe"))
         mime_type = "application/octet-stream";
-    else if (extension == "xml")
-        mime_type = "application/xml";
+    else if (extension == "xml" || extension == "pdf")
+        mime_type = "application/" + extension;
 
         // text mime
     else if (extension == "css")
@@ -64,7 +64,8 @@ std::string extractMime(std::string fileName) {
         mime_type = "text/html";
     else if (extension == "txt")
         mime_type = "text/plain";
-
+    else if (extension == "js")
+        mime_type = "text/javascript";
 
     return mime_type;
 }
