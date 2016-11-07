@@ -24,8 +24,7 @@
 
 class ThreadPool {
 public:
-    ThreadPool();
-    ThreadPool(size_t);
+    ThreadPool(int threadsCount = 3);
     virtual ~ThreadPool();
 
     // auto multiply (int x, int y) -> int; \\ int multiply (int x, int y);
@@ -65,17 +64,17 @@ private:
     ThreadPool & operator=(ThreadPool &&);
 
     // assign a thread to a task
-    void assignThread(size_t);
+    void assignThread(int);
 
     //
-    void make(size_t);
+    void make(int);
 
     // attributes
-    FunctionQueue<std::function<void(size_t) > *> * _queue;
+    FunctionQueue<std::function<void(void) > *> * _queue;
     std::vector< std::shared_ptr< std::thread > > _threads;
     std::vector< std::shared_ptr< std::atomic<bool> > > _abort; // abort thread
 
-    std::atomic<size_t> _idleCount;
+    std::atomic<int> _idleCount;
     std::mutex _mutex;
     std::mutex _queueMutex;
     std::condition_variable _condition;

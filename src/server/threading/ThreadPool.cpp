@@ -7,12 +7,7 @@
 
 #include "ThreadPool.h"
 
-ThreadPool::ThreadPool() {
-    this->_idleCount = 0;
-    this->make(3);
-}
-
-ThreadPool::ThreadPool(size_t threadsCount = 3) {
+ThreadPool::ThreadPool(int threadsCount) {
     this->_idleCount = 0;
     this->make(threadsCount);
 }
@@ -26,15 +21,15 @@ auto ThreadPool::push(Function&& function) -> std::future<decltype(function(0))>
     // make a pointer to the packaged (wrapped) task
     // we pass the function using std::forward to pass as rvalue
     auto package =
-            std::make_shared < std::packaged_task < decltype(function(0)) (size_t) > > (std::forward<Function>(function));
+            std::make_shared < std::packaged_task < decltype(function(0)) (int) > > (std::forward<Function>(function));
 
     // send thread id to the task
-    auto _function = new std::function<void(size_t)>([package](size_t id) {
+    auto _function = new std::function<void(int) >([package](int id) {
         (*package)(id);
     });
 
     // add to queue
-    this->_queue->push(_function);
+    //    this->_queue->push(_function);
 
     std::unique_lock<std::mutex> lock(this->_mutex);
     // wake up a thread to run the function
@@ -48,17 +43,17 @@ template<typename Function, typename... Params>
 auto ThreadPool::push(Function&& function, Params&&... params) -> std::future<decltype(function(0, params...))> {
     // make a pointer to the packaged (wrapped) task
     // we pass the function using std::forward to pass as rvalue
-    auto package = std::make_shared < std::packaged_task < decltype(function(0)) (size_t) > > (
+    auto package = std::make_shared < std::packaged_task < decltype(function(0)) (int) > > (
             std::bind(std::forward<Function>(function), std::placeholders::_1, std::forward<Params>(params)...)
             );
 
     // send thread id to the task
-    auto _function = new std::function<void(size_t)>([package](size_t id) {
+    auto _function = new std::function<void(int) >([package](int id) {
         (*package)(id);
     });
 
     // add to queue
-    this->_queue->push(_function);
+    //    this->_queue->push(_function);
 
     std::unique_lock<std::mutex> lock(this->_mutex);
     // wake up a thread to run the function
@@ -68,7 +63,7 @@ auto ThreadPool::push(Function&& function, Params&&... params) -> std::future<de
     return package->get_future();
 }
 
-void ThreadPool::assignThread(size_t index) {
+void ThreadPool::assignThread(int index) {
     std::shared_ptr < std::atomic<bool> > abort_ptr(this->_abort[index]);
 
     auto f = [this, index, abort_ptr]() {
@@ -76,7 +71,7 @@ void ThreadPool::assignThread(size_t index) {
 
         // get a task from queue
         // returns nullptr if empty
-        std::function<void(size_t)> * _function; // = this->_queue->pop();
+        std::function<void(int) > * _function; // = this->_queue->pop();
 
         // always pop a function from the queue
         // as long as it is not empty or there is no abort command
@@ -84,7 +79,7 @@ void ThreadPool::assignThread(size_t index) {
             while (_function != nullptr) {
                 // convert _function to a smart pointer to 
                 // delete ptr after thread finishes
-                std::unique_ptr < std::function<void(size_t id)> > func(_function);
+                std::unique_ptr < std::function<void(int id) > > func(_function);
 
                 // call the function
                 (*_function)(index);
@@ -93,7 +88,7 @@ void ThreadPool::assignThread(size_t index) {
                     return;
                 else {
                 }
-                // _function = this->_queue->pop();
+                //                _function = this->_queue->pop();
             }
 
             // queue is empty, wait for a function to be pushed
@@ -121,12 +116,12 @@ void ThreadPool::interrupt() {
     }
 
     // wait for the running threads to finish
-    for (size_t i = 0; i < _threads.size(); ++i) {
+    for (int i = 0; i < (int) _threads.size(); ++i) {
         if (_threads[i]->joinable())
             _threads[i]->join();
     }
 
-//    this->_queue->clear();
+    //    this->_queue->clear();
 
     _threads.clear();
     _abort.clear();
@@ -134,14 +129,14 @@ void ThreadPool::interrupt() {
 
 // TODO: edit to resize
 
-void ThreadPool::make(size_t threadsCount) {
-    size_t oldthreadsCount = _threads.size();
+void ThreadPool::make(int threadsCount) {
+    int oldthreadsCount = _threads.size();
     assert(oldthreadsCount <= threadsCount);
 
     _threads.resize(threadsCount);
     _abort.resize(threadsCount);
 
-    for (size_t i = oldthreadsCount; i < threadsCount; ++i) {
+    for (int i = oldthreadsCount; i < threadsCount; ++i) {
         _abort[i] = std::make_shared < std::atomic<bool>>(false);
         this->assignThread(i);
     }
