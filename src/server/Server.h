@@ -8,7 +8,6 @@
 #ifndef SERVER_H
 #define SERVER_H
 
-#define NUM_THREADS 5
 #define PORT 3130
 #define BUFFER_SIZE 8*1024
 
@@ -16,6 +15,7 @@
 #include "../sockets/ServerSocket.h"
 #include "../core/http.h"
 #include "threading/ThreadPool.h"
+#include "threading/EasyThreadPool.h"
 
 #include <iostream>
 #include <fstream>
@@ -48,8 +48,8 @@ private:
 
     ServerSocket socket;
     Socket* client;
-    ThreadPool pool;
-    // ctpl::thread_pool pool;
+    //    ThreadPool pool;
+    EasyThreadPool pool;
 
     int _port;
     int bufferSize;

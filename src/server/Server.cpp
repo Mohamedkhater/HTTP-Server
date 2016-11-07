@@ -32,9 +32,10 @@ void Server::run() {
             try {
                 // pool.push(handleRequest);
                 // pool.push(&Server::handleRequest);
-                pool.push([this]() {
-                    return this->handleRequest;
-                });
+                // pool.push([this]() {
+                //  return this->handleRequest;
+                // });
+                handleRequest();
             } catch (SocketException e) {
                 std::cout << e.what();
 
