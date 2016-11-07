@@ -6,7 +6,6 @@
  */
 
 #include <iostream>
-#include <string>
 
 #include "src/server/Server.h"
 
