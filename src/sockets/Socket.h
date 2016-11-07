@@ -35,8 +35,8 @@ public:
     int sendFile(std::string);
     std::string fetchMessage();
     
-    void setSocket(int);
-    int getSocket();
+    virtual void setSocket(int) override;
+    virtual int getSocket() override;
 
 protected:
     Socket();

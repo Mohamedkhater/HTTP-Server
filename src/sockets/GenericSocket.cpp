@@ -40,7 +40,3 @@ void GenericSocket::log(const std::string message) {
         std::cout << message << std::endl;
     socketLogFile.write(message);
 }
-
-
-
-

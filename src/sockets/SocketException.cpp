@@ -15,7 +15,7 @@
 #include "SocketException.h"
 
 SocketException::SocketException(const std::string message) {
-    this->message = message;
+    this->message = message + "\n";
 }
 
 SocketException::~SocketException() {
@@ -24,5 +24,3 @@ SocketException::~SocketException() {
 const char* SocketException::what() const throw () {
     return this->message.c_str();
 }
-
-

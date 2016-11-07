@@ -31,5 +31,3 @@ void Log::write(std::string data) {
         this->_file << data << std::endl;
     }
 }
-
-

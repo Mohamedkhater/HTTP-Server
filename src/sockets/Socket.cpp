@@ -22,7 +22,7 @@ Socket::Socket() {
     FD_ZERO(&readfds);
     FD_SET(getSocket(), &readfds);
 
-    tv.tv_sec = 10;
+    tv.tv_sec = 5;
     tv.tv_usec = 500000;
 }
 
@@ -97,11 +97,15 @@ void Socket::writeMessage(const unsigned char* message, int length) {
 
 int Socket::sendFile(std::string fileUrl) {
     int f = open(fileUrl.c_str(), O_RDONLY);
-    struct stat stat_buf;
-    fstat(f, &stat_buf);
-    sendfile(getSocket(), f, 0, stat_buf.st_size);
+    if (f > 0) {
+        struct stat stat_buf;
+        fstat(f, &stat_buf);
+        sendfile(getSocket(), f, 0, stat_buf.st_size);
+        close(f);
 
-    return (int) (stat_buf.st_size);
+        return (int) (stat_buf.st_size);
+    }
+    return -1;
 }
 
 const unsigned char* Socket::getMessage() {
@@ -123,7 +127,7 @@ Socket::Socket(int socket) : GenericSocket(socket) {
     FD_ZERO(&readfds);
     FD_SET(getSocket(), &readfds);
 
-    tv.tv_sec = 10;
+    tv.tv_sec = 5;
     tv.tv_usec = 500000;
 }
 

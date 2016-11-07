@@ -20,6 +20,9 @@
 #include <sys/socket.h> // sockets definitions
 #include <netinet/in.h> // internet domain addresses definitions
 #include <arpa/inet.h>
+#include <fcntl.h> // open files
+#include <sys/sendfile.h> // send files through sockets
+#include <sys/stat.h> // get file stats
 
 #include "Log.h"
 #include "SocketException.h"
@@ -30,8 +33,8 @@ protected:
     GenericSocket(int fileDescriptor);
     virtual ~GenericSocket();
 
-    void setSocket(int fileDescriptor);
-    int getSocket();
+    virtual void setSocket(int fileDescriptor);
+    virtual int getSocket();
 
     void log(const std::string);
 
