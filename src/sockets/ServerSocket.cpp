@@ -23,6 +23,10 @@ ServerSocket::ServerSocket(int port, int keepAlive) {
 ServerSocket::~ServerSocket() {
 }
 
+int ServerSocket::getSocket() {
+    return GenericSocket::getSocket();
+}
+
 void ServerSocket::listen(int port, int keepAlive) {
 
     serverAddr.sin_port = htons(port);

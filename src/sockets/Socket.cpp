@@ -22,8 +22,8 @@ Socket::Socket() {
     FD_ZERO(&readfds);
     FD_SET(getSocket(), &readfds);
 
-    tv.tv_sec = 5;
-    tv.tv_usec = 500000;
+    tv.tv_sec = 1;
+    tv.tv_usec = 100000;
 }
 
 Socket::~Socket() {
@@ -57,6 +57,7 @@ void Socket::readMessage(int length) {
 
         if (rv == 0) {
             ::close(getSocket());
+            //            throw SocketException("Socket timeout");
         }
 
         bytesRead = read(getSocket(), buffer + totalBytesRead, length - totalBytesRead); //Read the sent message.
@@ -127,8 +128,8 @@ Socket::Socket(int socket) : GenericSocket(socket) {
     FD_ZERO(&readfds);
     FD_SET(getSocket(), &readfds);
 
-    tv.tv_sec = 5;
-    tv.tv_usec = 500000;
+    tv.tv_sec = 1;
+    tv.tv_usec = 100000;
 }
 
 void Socket::sendMessage(std::string message) {

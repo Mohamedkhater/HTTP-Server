@@ -29,6 +29,8 @@ public:
     void listen(int, int keepAlive = 1);
     int accept();
 
+    int getSocket();
+
 private:
     //serverAddr - address of server, clientAddr - address of connected client. 
     struct sockaddr_in serverAddr, clientAddr;

@@ -24,28 +24,72 @@ Server::~Server() {
     client->~Socket();
 }
 
+//void Server::run() {
+//    while (true) {
+//        client = new Socket(socket.accept());
+//
+//        while (true) {
+//            try {
+//                handleRequest();
+//            } catch (SocketException e) {
+//                std::cout << e.what();
+//
+//                if (((std::string)e.what()).find("Client disconnected") != std::string::npos) exit(0);
+//
+//                break;
+//            }
+//        }
+//    }
+//}
+
+// processes
+
 void Server::run() {
     while (true) {
         client = new Socket(socket.accept());
 
-        while (true) {
-            try {
-                // pool.push(handleRequest);
-                // pool.push(&Server::handleRequest);
-                // pool.push([this]() {
-                //  return this->handleRequest;
-                // });
-                handleRequest();
-            } catch (SocketException e) {
-                std::cout << e.what();
+        if (!fork()) {
+            ::close(socket.getSocket());
 
-                if (((std::string)e.what()).find("Client disconnected") != std::string::npos) exit(0);
-
-                break;
+            while (true) {
+                try {
+                    handleRequest();
+                } catch (SocketException e) {
+                    std::cout << e.what();
+                    exit(-1);
+                }
             }
+            exit(0);
         }
+
+        ::close(client->getSocket());
     }
 }
+
+// threads
+//void Server::run() {
+//    while (true) {
+//        client = new Socket(socket.accept());
+//
+//        while (true) {
+//            try {
+//                pool.AddJob(handleRequest);
+//                // pool.AddJob(&Server::handleRequest);
+//                // pool.AddJob([this]() {
+//                //  return this->handleRequest;
+//                // });
+//            } catch (SocketException e) {
+//                std::cout << e.what();
+//
+//                if (((std::string)e.what()).find("Client disconnected") != std::string::npos) exit(0);
+//
+//                break;
+//            }
+//        }
+//    }
+//}
+
+// pojo
 
 void Server::handleRequest() {
     HTTPrequest* request = new HTTPrequest();
@@ -77,6 +121,7 @@ void Server::processRequest(HTTPrequest* request, HTTPresponse* response) {
             getHandler(request, response);
             break;
         case POST:
+            //            std::cout << "\n\n\npost,post,post,post,post,post,post,post\n\n\n";
             postHandler(request, response);
             break;
         default:
@@ -158,6 +203,8 @@ void Server::readFromFile(std::ifstream& file) {
 }
 
 void Server::postHandler(HTTPrequest* request, HTTPresponse* response) {
+    std::cout << "";
+
     std::string content = client->fetchMessage();
     std::string fileNameString = "filename=\"";
 
@@ -184,6 +231,9 @@ void Server::postHandler(HTTPrequest* request, HTTPresponse* response) {
     file.open(fileUrl, std::ofstream::out);
     file.write(buffer, length);
     file.close();
+
+    response->setStatusCode(200);
+    response->setResponseBody("");
 }
 
 
